@@ -84,6 +84,14 @@ class SearchBar extends React.Component {
 }
 
 class FilterableProductTable extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      filerText: '',
+      inStockOnly: false
+    };
+
+  }
   render() {
     return (
       <div>

@@ -7,7 +7,16 @@ import ProductTable from './ProductTable'
 function FilterableProductTable (props) {
     const [filterText, setFilterText] = useState('');
     const [inStockOnly, setInStockOnly] = useState(false);
-    console.log(props.products);
+
+    let filteredProducts = props.products;
+    if (filterText !== '') {
+        filteredProducts = filterByName(filteredProducts, filterText);
+    }
+    if (inStockOnly) {
+        filteredProducts = filterByStock(filteredProducts);
+    }
+
+    const groupedProducts = groupByCategory(filteredProducts);
 
         return (
           <div className="container">
@@ -19,12 +28,37 @@ function FilterableProductTable (props) {
               setInStockOnly={setInStockOnly}
             />
             <ProductTable
-              products={props.products}
-              filterText={filterText}
-              inStockOnly={inStockOnly}
+              groupedProducts={groupedProducts}
             />
           </div>
         );
 }
+
+function filterByName (products, filterText) {
+    let how = (product) => {
+      return product.name.includes(filterText);
+    }
+  
+    return products.filter(how)
+  }
+
+  function filterByStock (products) {
+    let how = (product) => {
+      return product.stocked;
+    }
+  
+    return products.filter ( how );
+  }
+
+  function groupByCategory(products) {
+    function getCategories(accumulator, product) {
+        let categoryProducts = accumulator[product.category] ? accumulator[product.category] : [];
+        categoryProducts.push(product);
+        accumulator[product.category] = categoryProducts;
+        return accumulator;
+    }
+
+    return products.reduce(getCategories, {});
+  }
 
 export default FilterableProductTable;
